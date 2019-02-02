@@ -1,0 +1,293 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Welcome to Geowind </title>
+		<link rel="shortcut icon" href="https://geowind-1257562436.cos.ap-chengdu.myqcloud.com/images/favicon.ico" />
+		<style>
+			body,
+			html {
+				color: #000000;
+				position: absolute;
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				touch-action: none;
+				content-zooming: none;
+				background: #fff;
+			}
+			
+			canvas {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				user-select: none;
+				background: #000;
+			}
+			
+			h1 {
+				background-color: #fff
+			}
+			
+			#center-in-blow {
+				position: absolute;
+				top: 80%;
+				left: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+			}
+			
+			 @media (max-width:480px){
+			 	#center-in-top{
+				position: absolute;
+				top: 20%;
+				left: 50%;
+				width: 90%;
+				height: 20%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				color: #F1B0B7;
+				font-family: Georgia;
+				font-size: 2em;
+				letter-spacing: 0.1em;
+				text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.6);
+			}
+			}
+			 @media (min-width:480px){
+			 	#center-in-top{
+				position: absolute;
+				top: 20%;
+				left: 50%;
+				width: 90%;
+				height: 20%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				color: #F1B0B7;
+				font-family: Georgia;
+				font-size: 1em;
+				letter-spacing: 0.1em;
+				text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.6);
+			}		
+			}	
+		</style>
+		<!--可定制button样式-->
+		<link rel="stylesheet" href="https://geowind-1257562436.cos.ap-chengdu.myqcloud.com/assets/css/index/buttons.css" />
+		<style>
+		.imgbg {
+			background-image: url(images/logo.jpg)
+		}
+		</style>
+		<!--好看的图标样式-->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+		
+	</head>
+
+	<body class="imgbg">
+		<script type="text/javascript" src="https://geowind-1257562436.cos.ap-chengdu.myqcloud.com/assets/js/index/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="https://geowind-1257562436.cos.ap-chengdu.myqcloud.com/assets/js/index/jquery.flipping_text.js"></script>
+		<script type="text/javascript" src="https://geowind-1257562436.cos.ap-chengdu.myqcloud.com/assets/js/index/modernizr.js"></script>
+		<script>
+			"use strict"; {
+				const txt = 'GEOWIND OF USC';
+				const viscosity = 0.005;
+				const stiffness = 0.99;
+				class Point {
+					constructor(i, x, y) {
+						this.c = null;
+						this.x0 = x;
+						this.y0 = y;
+						this.x = x + Math.sin(i) * 100;
+						this.y = y + Math.cos(i) * 100;
+						this.vx = 0.0;
+						this.vy = 0.0;
+						this.a = 0.0;
+						this.s = 0.0;
+						this.p0 = this;
+						this.p1 = this;
+						this.t = 0;
+					}
+					texture(c, color) {
+						this.c = document.createElement("canvas");
+						const ctx = this.c.getContext("2d");
+						this.c.width = this.c.height = 400;
+						ctx.font = "300px Arial Black, Arial";
+						ctx.fillStyle = color;
+						ctx.textAlign = "center";
+						ctx.fillText(c, 200, 385);
+					}
+					drawSegment() {
+						ctx.beginPath();
+						ctx.strokeStyle = "#666";
+						ctx.moveTo(this.p0.x, this.p0.y);
+						ctx.lineTo(this.x, this.y);
+						ctx.lineTo(this.p1.x, this.p1.y);
+						ctx.stroke();
+						ctx.beginPath();
+						ctx.arc(this.x, this.y, 3, 0, 2 * Math.PI);
+						ctx.stroke();
+					}
+					draw() {
+						const fx = (this.x0 - this.x) * viscosity;
+						const fy = (this.y0 - this.y) * viscosity;
+						this.vx *= stiffness;
+						this.vy *= stiffness;
+						this.vx += fx;
+						this.vy += fy;
+						this.x += this.vx;
+						this.y += this.vy;
+						if(this.c !== null) {
+							ctx.beginPath();
+							ctx.save();
+							ctx.translate(this.x, this.y);
+							const dy = this.p1.x - this.p0.x;
+							const dx = this.p1.y - this.p0.y;
+							this.a = Math.atan2(dx, dy);
+							this.s = Math.sqrt(dy * dy + dx * dx) / 2;
+							ctx.rotate(this.a);
+							ctx.drawImage(this.c, -this.s * 0.5, -this.s * 0.5, this.s, this.s);
+							ctx.restore();
+						}
+					}
+				}
+				const points = [];
+				const canvas = {
+					init() {
+						this.elem = document.createElement("canvas");
+						document.body.appendChild(this.elem);
+						this.resize();
+						window.addEventListener("resize", () => this.resize(), false);
+						return this.elem.getContext("2d");
+					},
+					resize() {
+						this.width = this.elem.width = this.elem.offsetWidth;
+						this.height = this.elem.height = this.elem.offsetHeight;
+						let x = 0;
+						const sx = this.width / (txt.length + 1);
+						for(const p of points) {
+							p.x0 = x;
+							p.y0 = canvas.height / 2;
+							x += sx;
+						}
+					}
+				};
+				const ctx = canvas.init();
+				ctx.imageSmoothingEnabled = true;
+				const pointer = {
+					x: 0,
+					y: 0,
+					dx: 0,
+					dy: 0,
+					drag: null,
+					over: null,
+					down(e, touch) {
+						this.move(e, touch);
+						if(this.over) {
+							this.dx = this.x - this.over.x;
+							this.dy = this.y - this.over.y;
+							this.drag = this.over;
+							canvas.elem.style.cursor = "move";
+						}
+					},
+					up(e, touch) {
+						this.drag = null;
+						canvas.elem.style.cursor = "default";
+					},
+					move(e, touch) {
+						const pointer = touch ? e.targetTouches[0] : e;
+						this.x = pointer.clientX;
+						this.y = pointer.clientY;
+						this.over = null;
+						if(this.drag === null) {
+							for(const p of points) {
+								const dx = this.x - p.x;
+								const dy = this.y - p.y;
+								const d = Math.sqrt(dx * dx + dy * dy);
+								if(d < p.s * 0.5) {
+									canvas.elem.style.cursor = "pointer";
+									this.over = p;
+									break;
+								} else {
+									canvas.elem.style.cursor = "default";
+								}
+							}
+						}
+					},
+					init() {
+						window.addEventListener("mousedown", e => this.down(e, false), false);
+						window.addEventListener("touchstart", e => this.down(e, true), false);
+						window.addEventListener("mousemove", e => this.move(e, false), false);
+						canvas.elem.addEventListener("touchmove", e => this.move(e, true), false);
+						window.addEventListener("mouseup", e => this.up(e, false), false);
+						window.addEventListener("touchend", e => this.up(e, true), false);
+					}
+				}; {
+					let x = 0;
+					const sx = canvas.width / (txt.length + 1);
+					for(let i = 0; i < txt.length + 2; i++) {
+						points.push(new Point(i, x, canvas.height / 2));
+						x += sx;
+					}
+					for(let i = 1; i < txt.length + 1; i++) {
+						const p = points[i];
+						p.p0 = points[i - 1];
+						p.p1 = points[i + 1];
+						p.s = sx;
+						p.texture(txt.charAt(i - 1), i === 5 ? "#f80" : "#fff");
+					}
+				}
+				const run = () => {
+					requestAnimationFrame(run);
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					for(const p of points) {
+						if(pointer.drag === p) {
+							p.x = pointer.x - pointer.dx;
+							p.y = pointer.y - pointer.dy;
+						}
+						p.draw();
+					}
+					for(const p of points) {
+						p.drawSegment();
+					}
+				}
+				pointer.init();
+				run();
+			}
+		</script>
+
+		<article id="center-in-top">
+			<div class="intro">南华大学经纬度团队</div>
+			<br />
+			<div class="intro" data-delay="">一个专注于应用软件开发，掌握主流技术，追逐科技前沿，积极参加各大科技赛事，探索互联网的大学生团队。
+			</div>
+			<hr />
+			<div class="intro">Geowind of USC</div>
+			<br />
+			<div class="intro" data-delay="">A college student team focusing on application software development, mastering mainstream technology, pursuing the frontier of science and technology, actively participating in various scientific and technological competitions and exploring the Internet.
+			</div>
+		</article>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".intro").flipping_text({
+					tickerTime: 25,
+					customRandomChar: false,
+					tickerCount: 5,
+					opacityEffect: true,
+					resetOnChange: false
+				});
+
+			});
+		</script>
+		<button id="center-in-blow" class="button button-large button-plain button-borderless" style="width: 200px;" onclick="javascrtpt:window.location.href='home.html' "><i class="fa fa-angle-double-down"></i></button>
+	</body>
+
+</html>

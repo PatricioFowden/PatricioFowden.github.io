@@ -1,0 +1,153 @@
+#boxWrap{
+    overflow: hidden;
+}
+.box-item{
+    float: left;
+    width: 360px;
+    padding: 10px;
+    margin: 10px;
+    position: absolute;
+    overflow: hidden;
+    transition: all 0.5s;
+}
+.box-item:hover{
+    box-shadow: 0 0 10px #1875c6;
+    background: #1875c6;
+    color: #fff;
+}
+.box-item::after{
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    bottom: -50%;
+    left: -50%;
+    background: linear-gradient(to top, transparent 0%, #fff 2%, #fff 8%, transparent 10%);
+    transform: rotateZ(45deg) translate(-50%, 0);
+    opacity: 0;
+}
+.box-item:hover:after  {
+    animation: card-shiny 0.8s forwards 0.2s;
+}
+@keyframes card-shiny {
+    0%{
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: rotateZ(45deg) translate(50%, -100%);
+    }
+}
+.box-item:hover .head{
+    box-shadow: 0 0 15px #fff;
+}
+
+.box-item .head{
+    display: block;
+    border-radius: 50%;
+    border: 5px #ffffff solid;
+    margin: 0 auto;
+    box-shadow: 0 0 15px #ccc;
+}
+
+.box-item .major, .box-item h3{
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.social a{
+    display: inline-block;
+    margin-left: 10px;
+}
+
+#filter{
+    padding: 5px;
+    padding-top: 10px;
+}
+
+.total{
+    margin-left: 6px;
+}
+
+.filterBtn{
+    color: #6b6b6b;
+    padding: 4px 8px;
+    padding-right: 20px;
+    margin-right: 20px;
+    border: 1px #ccc solid;
+    position: relative;
+}
+.filterBtn::after{
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 5px transparent solid;
+    border-top-color: #6b6b6b;
+    right: 5px;
+    top: 50%;
+    margin-top: -2.5px;
+}
+.filterBtn.on::after{
+    margin-top: -7.5px;
+    transform: rotate(180deg);
+}
+#condition{
+    border: 1px #ccc solid;
+    margin: 10px 20px 0 0;
+    padding: 0 5px;
+    overflow: hidden;
+    display: none;
+}
+#condition>div{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+#condition>div:not(:first-child){
+    border-top: 1px #ccc dotted;
+}
+#condition .title{
+    width: 100px;
+    color: #6b6b6b
+}
+#condition .content span{
+    display: inline-block;
+    float: left;
+    margin-right: 20px;
+    cursor: pointer;
+}
+#condition .content span:hover{
+    color: #0097dd;
+}
+
+#filterWrap span{
+    color: #6b6b6b;
+    padding: 4px 8px;
+    padding-right: 20px;
+    margin-left: 10px;
+    border: 1px #ccc solid;
+    position: relative;
+    cursor: pointer;
+}
+#filterWrap span:hover{
+    color: #f00e5a;
+    border: 1px #f00e5a solid;
+}
+#filterWrap span::before, #filterWrap span::after{
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 1px;
+    background-color: #6b6b6b;
+    right: 5px;
+    top: 50%;
+}
+#filterWrap span::before{
+    transform: rotateZ(45deg);
+}
+#filterWrap span::after{
+    transform: rotateZ(-45deg);
+}
+#filterWrap span:hover::before, #filterWrap span:hover::after{
+    background-color: #f00e5a;
+}
